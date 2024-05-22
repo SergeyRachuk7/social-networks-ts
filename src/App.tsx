@@ -1,7 +1,10 @@
-import React from 'react';
+import React, { ChangeEvent } from 'react';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import './App.css';
-import state from "./redux/state";
+import state, { changeNewText, PostType } from "./redux/state";
+import { addPost } from './redux/state';
+
+
 
 const App = () => {
 
@@ -13,8 +16,9 @@ const App = () => {
       <div className='App'>
         APP HELLO
         <Routes>
-          <Route path='/hello/' element={<HelloMessage message={message} />} />
-          <Route path='/bye' element={<ByeMessage message={message2} />} />
+          <Route path='/hello/' element={<HelloMessage posts={state.profilePage.posts} message={state.profilePage.messageForNewPost} addPostCallback={addPost} changeNewTextCallback={changeNewText} />}
+          />
+          {/* <Route path='/bye' element={<ByeMessage message={message2} addPostCallback={addPost} />} /> */}
         </Routes>
       </div>
     </ BrowserRouter>
@@ -24,19 +28,32 @@ const App = () => {
 
 type MessageType = {
   message: string
+  posts: Array<PostType>
+  addPostCallback: (postText: string) => void
+  changeNewTextCallback: (newText: string) => void
 }
 
 function HelloMessage(props: MessageType) {
-  debugger
-  return <h1>{props.message}</h1>
+  const addPost = () => {
+    props.addPostCallback(props.message)
+  }
+
+  const newTextChangeHandler = (e: ChangeEvent<HTMLTextAreaElement>) => {
+    props.changeNewTextCallback(e.currentTarget.value);
+  }
+
+  return <div>{props.message}
+    <hr />
+    {props.posts.map(p => <div key={p.id}><b>{p.message}</b></div>)}
+    <hr />
+    <textarea value={props.message} onChange={newTextChangeHandler} ></textarea>
+    <button onClick={addPost}>add post</button>
+  </div>
 }
 
 const ByeMessage: React.FC<MessageType> = (props) => {
   return <h1>{props.message}</h1>
 }
-
-
-
 
 
 

@@ -1,3 +1,4 @@
+import { renderTree } from '../render';
 
 type MessegeType = {
   id: number
@@ -9,14 +10,15 @@ type DialogType = {
     name: string
 }  
 
-type PostType = {
+export type PostType = {
     id: number 
     message: string 
     likesCount: number
 }  
 
-type ProfilePageType = {
-      posts: Array<PostType>
+type ProfilePageType = { 
+    messageForNewPost: string
+    posts: Array<PostType>
 } 
 
 type DialogPageType = {
@@ -26,14 +28,15 @@ type DialogPageType = {
 
 type SidebaType = {}
 
-type RootStateType = {
+export type RootStateType = {
     profilePage: ProfilePageType 
     dialogsPage:  DialogPageType 
     sidebar: SidebaType
 } 
 
 let state: RootStateType = {
-    profilePage: {
+    profilePage: { 
+      messageForNewPost: "sms", 
       posts: [
         {id: 1, message: "Hi, how are you?", likesCount: 12 }, 
         {id: 2, message: "It\'s my first post", likesCount: 11 }, 
@@ -61,5 +64,27 @@ let state: RootStateType = {
     sidebar: {}
 
 } 
+ 
+export const addPost = (postText: string ) => { 
+    const newPost: PostType = {
+        id: new Date().getTime(),
+        message: postText, 
+        likesCount:0
+    }
+
+   state.profilePage.posts.push(newPost); 
+
+
+   renderTree(state)
+} 
+
+
+
+
+export const changeNewText = (newText: string) => {
+    state.profilePage.messageForNewPost = newText; 
+    renderTree(state)
+}
+
 
 export default state
