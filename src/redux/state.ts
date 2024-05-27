@@ -1,4 +1,3 @@
-import { renderTree } from '../render';
 
 type MessegeType = {
   id: number
@@ -34,7 +33,40 @@ export type RootStateType = {
     sidebar: SidebaType
 } 
 
-let state: RootStateType = {
+
+
+
+export type StoreType = {
+      _state: RootStateType 
+      changeNewText: (newText: string) => void 
+      addPost: (postText: string) => void 
+      _onChange: () => void 
+      subcribe: (callback: () => void) => void 
+      getState: () => RootStateType 
+      dispatch: (action: ActionsTypes) => void
+}  
+ 
+
+
+export type ActionsTypes =  ReturnType<typeof addPostAC> | ReturnType<typeof changeNewTextAC >
+
+export const addPostAC = (postText: string) => {
+    return {
+        type :  "ADD-POST",
+        postText: postText
+    } as const
+}  
+
+
+export const changeNewTextAC = (newText: string) => {
+    return {
+        type :  "CHENGE-NEW-TEXT",
+        newText: newText
+    } as const
+}
+
+const store: StoreType = {
+     _state:  {
     profilePage: { 
       messageForNewPost: "sms", 
       posts: [
@@ -63,28 +95,45 @@ let state: RootStateType = {
     },
     sidebar: {}
 
-} 
  
-export const addPost = (postText: string ) => { 
+}, changeNewText(newText: string)  {
+      this._state.profilePage.messageForNewPost = newText; 
+      this._onChange()  
+   },  
+   addPost(postText: string )  { 
     const newPost: PostType = {
         id: new Date().getTime(),
         message: postText, 
         likesCount:0
     }
-
-   state.profilePage.posts.push(newPost); 
-
-
-   renderTree(state)
-} 
-
-
-
-
-export const changeNewText = (newText: string) => {
-    state.profilePage.messageForNewPost = newText; 
-    renderTree(state)
+   this._state.profilePage.posts.push(newPost); 
+   this._onChange() 
+  }, 
+  _onChange () {
+    console.log("state chenged")
+},
+  subcribe(callback)  {
+    this._onChange = callback;  
+  },   
+  getState() {
+      return this._state;
+  }, 
+  dispatch(action) {
+      if(action.type ===  "ADD-POST") {
+           const newPost: PostType = {
+        id: new Date().getTime(),
+        message:action.postText, 
+        likesCount:0
+    }
+      this._state.profilePage.posts.push(newPost) 
+      this._onChange() 
+    } else if (action.type === "CHENGE-NEW-TEXT") {
+      this._state.profilePage.messageForNewPost = action.newText; 
+      this._onChange()  
+    }
+  } 
 }
 
 
-export default state
+export default store; 
+

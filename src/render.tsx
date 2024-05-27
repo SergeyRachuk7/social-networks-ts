@@ -1,7 +1,8 @@
-import state, { RootStateType } from './redux/state';
+import { RootStateType } from './redux/state';
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import App from './App';
+import store from './redux/state';
 
 
 
@@ -11,7 +12,7 @@ export const renderTree = (state: RootStateType) => {
   );
   root.render(
     <React.StrictMode>
-      <App />
+      <App store={store} />
     </React.StrictMode>
   );
 }
